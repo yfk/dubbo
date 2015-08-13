@@ -538,4 +538,17 @@
 			<timezone>+8</timezone>
 		</developer>
 	</developers>
+
+	<distributionManagement>
+		<repository>
+			<id>dianping.repo</id>
+			<name>Dian Ping internal repository for released artifacts</name>
+			<url>http://172.16.34.133:8081/nexus/content/repositories/envision</url>
+		</repository>
+		<snapshotRepository>
+			<id>dianping.repo.snapshots</id>
+			<name>Dian Ping internal repository for snapshots artifacts</name>
+			<url>http://172.16.34.133:8081/nexus/content/repositories/envision</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
