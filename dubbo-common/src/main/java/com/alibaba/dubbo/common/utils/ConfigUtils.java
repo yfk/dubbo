@@ -15,6 +15,7 @@
  */
 package com.alibaba.dubbo.common.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
@@ -145,6 +146,7 @@ public class ConfigUtils {
         if (PROPERTIES == null) {
             synchronized (ConfigUtils.class) {
                 if (PROPERTIES == null) {
+                	//从环境变量中获取配置路径
                     String path = System.getProperty(Constants.DUBBO_PROPERTIES_KEY);
                     if (path == null || path.length() == 0) {
                         path = System.getenv(Constants.DUBBO_PROPERTIES_KEY);
@@ -155,6 +157,14 @@ public class ConfigUtils {
                     PROPERTIES = ConfigUtils.loadProperties(path, false, true);
                 }
             }
+        }
+        
+        if(PROPERTIES == null){
+            PROPERTIES =  ConfigUtils.loadProperties(Constants.GLOBAL_DUBBO_PROPERTIES, false, true);
+        }
+        
+        if(PROPERTIES == null){
+        	PROPERTIES = new Properties();
         }
         return PROPERTIES;
     }
@@ -209,7 +219,8 @@ public class ConfigUtils {
         Properties properties = new Properties();
         if (fileName.startsWith("/")) {
             try {
-                FileInputStream input = new FileInputStream(fileName);
+    			File file = new File(fileName); // 要读取以上路径的input。txt文件
+                FileInputStream input = new FileInputStream(file);
                 try {
                     properties.load(input);
                 } finally {
@@ -217,6 +228,7 @@ public class ConfigUtils {
                 }
             } catch (Throwable e) {
                 logger.warn("Failed to load " + fileName + " file from " + fileName + "(ingore this file): " + e.getMessage(), e);
+                properties = null;
             }
             return properties;
         }
@@ -230,12 +242,14 @@ public class ConfigUtils {
             }
         } catch (Throwable t) {
             logger.warn("Fail to load " + fileName + " file: " + t.getMessage(), t);
+            properties = null;
         }
         
         if(list.size() == 0) {
             if (! optional) {
                 logger.warn("No " + fileName + " found on the class path.");
             }
+            properties = null;
             return properties;
         }
         
@@ -252,6 +266,7 @@ public class ConfigUtils {
                 properties.load(ClassHelper.getClassLoader().getResourceAsStream(fileName));
             } catch (Throwable e) {
                 logger.warn("Failed to load " + fileName + " file from " + fileName + "(ingore this file): " + e.getMessage(), e);
+                properties = null;
             }
             return properties;
         }
@@ -274,6 +289,7 @@ public class ConfigUtils {
                 }
             } catch (Throwable e) {
                 logger.warn("Fail to load " + fileName + " file from " + url + "(ingore this file): " + e.getMessage(), e);
+                properties = null;
             }
         }
         
