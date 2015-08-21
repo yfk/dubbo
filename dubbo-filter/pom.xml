@@ -30,6 +30,5 @@
 	</properties>
 	<modules>
 		<module>dubbo-filter-cache</module>
-		<module>dubbo-filter-validation</module>
 	</modules>
 </project>
