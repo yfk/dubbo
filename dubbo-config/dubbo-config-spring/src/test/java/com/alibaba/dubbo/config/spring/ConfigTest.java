@@ -947,7 +947,7 @@ public class ConfigTest {
     @Test
     public void testGenericServiceConfig() throws Exception {
         ServiceConfig<GenericService> service = new ServiceConfig<GenericService>();
-        service.setApplication(new ApplicationConfig("test"));
+        //service.setApplication(new ApplicationConfig("test"));
         service.setRegistry(new RegistryConfig("mock://localhost"));
         service.setInterface(DemoService.class.getName());
         service.setGeneric(Constants.GENERIC_SERIALIZATION_BEAN);

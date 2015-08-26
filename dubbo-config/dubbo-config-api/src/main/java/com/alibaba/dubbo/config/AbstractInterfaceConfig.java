@@ -15,16 +15,20 @@
  */
 package com.alibaba.dubbo.config;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.Version;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
+import com.alibaba.dubbo.common.utils.ClassHelper;
 import com.alibaba.dubbo.common.utils.ConfigUtils;
+import com.alibaba.dubbo.common.utils.FileUtils;
 import com.alibaba.dubbo.common.utils.NetUtils;
 import com.alibaba.dubbo.common.utils.ReflectUtils;
 import com.alibaba.dubbo.common.utils.StringUtils;
@@ -115,6 +119,30 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                 }
             }
         }
+        
+        //从全局配置文件获取
+        if((registries == null || registries.size() == 0)){
+			try {
+				java.net.URL appProperties = new java.net.URL("file:" + Constants.GLOBAL_APP_PROPERTIES);
+				Properties properties = null;
+				if (appProperties != null) {
+					properties = FileUtils.readFile(appProperties.openStream());
+					String address = properties.getProperty("arch.zk.address");
+					if (address != null && address.length() > 0) {
+						registries = new ArrayList<RegistryConfig>();
+						String[] as = address.split("\\s*[|]+\\s*");
+						for (String a : as) {
+							RegistryConfig registryConfig = new RegistryConfig();
+							registryConfig.setAddress(a);
+							registries.add(registryConfig);
+						}
+					}
+				}
+			} catch (Throwable e) {
+			}
+
+        }
+        
         if ((registries == null || registries.size() == 0)) {
             throw new IllegalStateException((getClass().getSimpleName().startsWith("Reference") 
                     ? "No such any registry to refer service in consumer " 
@@ -138,6 +166,33 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                 application = new ApplicationConfig();
             }
         }
+        
+        //从配置文件获取
+        if(application == null){
+			try {
+				java.net.URL appProperties = AbstractInterfaceConfig.class.getResource(Constants.LOCAL_APP_PROPERTIES);
+				if (appProperties == null) {
+					appProperties = new java.net.URL("file:" + AbstractInterfaceConfig.class.getResource("/").getPath()
+							+ Constants.LOCAL_APP_PROPERTIES);
+					if (!new File(appProperties.getFile()).exists()) {
+						appProperties = new java.net.URL("file:" + Constants.GLOBAL_APP_PROPERTIES);
+					}
+				}
+				Properties properties = null;
+				if (appProperties != null) {
+					properties = FileUtils.readFile(appProperties.openStream());
+					application = new ApplicationConfig();
+					String appName=properties.getProperty("app.name");
+					if(null == appName){
+						appName = "";
+					}
+					application.setName(appName);
+				}
+			} catch (Throwable e) {
+			}
+
+        }
+        
         if (application == null) {
             throw new IllegalStateException(
                                             "No such application config! Please add <dubbo:application name=\"...\" /> to your spring config.");

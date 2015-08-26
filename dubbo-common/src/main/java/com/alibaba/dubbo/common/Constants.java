@@ -63,8 +63,10 @@ public class Constants {
 
     public static final String  DEFAULT_DUBBO_PROPERTIES           = "dubbo.properties";
     
-    public static final String  GLOBAL_DUBBO_PROPERTIES           = "/data/apps/config/arch-rpc/arch-rpc.properties";
+    public static final String  GLOBAL_APP_PROPERTIES           = "/data/apps/config/app.properties";
 
+    public static final String  LOCAL_APP_PROPERTIES           = "/config/app.properties";
+    
     public static final String  SENT_KEY                           = "sent";
 
     public static final boolean DEFAULT_SENT                       = false;
