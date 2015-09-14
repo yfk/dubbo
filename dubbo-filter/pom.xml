@@ -30,5 +30,6 @@
 	</properties>
 	<modules>
 		<module>dubbo-filter-cache</module>
+		<module>dubbo-filter-cat</module>
 	</modules>
 </project>

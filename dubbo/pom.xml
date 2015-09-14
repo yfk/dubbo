@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>com.envision.arch</groupId>
 	<artifactId>arch-rpc</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	<description>envision soa framework</description>
@@ -116,6 +116,11 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>dubbo-monitor-default</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>dubbo-filter-cat</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -276,6 +281,7 @@
 									<include>com.alibaba:dubbo-rpc-http</include>
 									<include>com.alibaba:dubbo-rpc-rmi</include>
 									<include>com.alibaba:dubbo-filter-cache</include>
+									<include>com.alibaba:dubbo-filter-cat</include>
 									<include>com.alibaba:dubbo-cluster</include>
 									<include>com.alibaba:dubbo-registry-api</include>
 									<include>com.alibaba:dubbo-registry-default</include>
