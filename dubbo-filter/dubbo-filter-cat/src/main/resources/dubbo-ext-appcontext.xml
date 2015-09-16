@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/mvc
+ http://www.springframework.org/schema/mvc/spring-mvc.xsd
+ http://www.springframework.org/schema/context
+ http://www.springframework.org/schema/context/spring-context.xsd
+ http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+  	
+  	<!-- 加入cat 监控 -->
+  	<dubbo:provider filter="DubboCatFilter" />
+  	
+  	<!-- lazy init 
+  	<dubbo:protocol name="dubbo" lazy="true" />-->
+  	<!-- 启动时检查提供者是否存在，true报错，false忽略 -->
+  	<dubbo:consumer check="false" />
+  	<!-- 超时时间 5000 ms -->
+  	<dubbo:provider timeout="5000" />
+  	<!-- 不重试 -->
+  	<dubbo:provider retries="0" />
+ 
+</beans>
