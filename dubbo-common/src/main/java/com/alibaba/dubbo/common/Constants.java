@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
  * @author william.liangf
  */
 public class Constants {
-
+	public static final String PROJECT_NAME                        = "Eagle";					
+	
     public static final String  PROVIDER                           = "provider";
 
     public static final String  CONSUMER                           = "consumer";

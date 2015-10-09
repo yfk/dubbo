@@ -1,6 +1,7 @@
 package com.alibaba.dubbo.cat.filter;
 
 import com.alibaba.dubbo.common.Constants;
+import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.Filter;
 import com.alibaba.dubbo.rpc.Invocation;
@@ -20,7 +21,12 @@ public class DubboCatFilter implements Filter {
 
 	public Result invoke(Invoker<?> invoker, Invocation invocation)
 			throws RpcException {
-		Transaction t = Cat.getProducer().newTransaction("Arch-RPC", getName(invoker, invocation));
+
+		String transationName = Constants.PROJECT_NAME + "Service";
+		if(!invoker.getUrl().getParameter(Constants.SIDE_KEY).equals(Constants.PROVIDER)){
+			transationName = Constants.PROJECT_NAME + "Call";
+		}
+		Transaction t = Cat.getProducer().newTransaction(transationName, getName(invoker, invocation));
 		try {
 			Result result = invoker.invoke(invocation);
 			t.setStatus(Transaction.SUCCESS);

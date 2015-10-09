@@ -7,8 +7,8 @@
 		<version>2.5.4-SNAPSHOT</version>
 	</parent>
 	<groupId>com.envision.arch</groupId>
-	<artifactId>arch-rpc</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<artifactId>eagle</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	<description>envision soa framework</description>
