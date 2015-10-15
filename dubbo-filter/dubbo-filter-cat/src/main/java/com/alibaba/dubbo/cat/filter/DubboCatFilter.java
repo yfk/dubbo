@@ -1,12 +1,12 @@
 package com.alibaba.dubbo.cat.filter;
 
 import com.alibaba.dubbo.common.Constants;
-import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.Filter;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.dianping.cat.Cat;
 import com.dianping.cat.message.Transaction;
@@ -23,10 +23,21 @@ public class DubboCatFilter implements Filter {
 			throws RpcException {
 
 		String transationName = Constants.PROJECT_NAME + "Service";
+		String transationType = transationName + ".client";
+		String ip = RpcContext.getContext().getRemoteHost();
+		String appName = null;
 		if(!invoker.getUrl().getParameter(Constants.SIDE_KEY).equals(Constants.PROVIDER)){
 			transationName = Constants.PROJECT_NAME + "Call";
+			transationType = transationName + ".server";
+			appName =  invoker.getUrl().getParameter(Constants.PROVIDE_APP);
+		}else{
+			appName = invocation.getAttachment(Constants.CONSUMER_APP);
 		}
+
 		Transaction t = Cat.getProducer().newTransaction(transationName, getName(invoker, invocation));
+		Cat.logEvent(transationType, ip);
+		Cat.logEvent(transationName + ".app", appName);
+		
 		try {
 			Result result = invoker.invoke(invocation);
 			t.setStatus(Transaction.SUCCESS);

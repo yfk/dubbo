@@ -75,6 +75,8 @@ public class RpcContext {
     private List<URL> urls;
 
     private URL url;
+    
+    private URL remote_url;
 
     private String methodName;
 
@@ -622,4 +624,13 @@ public class RpcContext {
 			removeAttachment(Constants.RETURN_KEY);
 		}
     }
+
+	public URL getRemote_url() {
+		return remote_url;
+	}
+
+	public RpcContext setRemote_url(URL remote_url) {
+		this.remote_url = remote_url;
+		return this;
+	}
 }

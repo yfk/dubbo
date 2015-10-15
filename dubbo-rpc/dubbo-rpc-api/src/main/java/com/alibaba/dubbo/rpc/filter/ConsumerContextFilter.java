@@ -39,6 +39,7 @@ public class ConsumerContextFilter implements Filter {
                 .setInvoker(invoker)
                 .setInvocation(invocation)
                 .setLocalAddress(NetUtils.getLocalHost(), 0)
+                .setRemote_url(invoker.getUrl())
                 .setRemoteAddress(invoker.getUrl().getHost(), 
                                   invoker.getUrl().getPort());
         if (invocation instanceof RpcInvocation) {
