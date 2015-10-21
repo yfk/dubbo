@@ -21,37 +21,44 @@ public class DubboCatFilter implements Filter {
 
 	public Result invoke(Invoker<?> invoker, Invocation invocation)
 			throws RpcException {
-
-		String transationName = Constants.PROJECT_NAME + "Service";
-		String transationType = transationName + ".client";
-		String ip = RpcContext.getContext().getRemoteHost();
-		String appName = null;
-		if(!invoker.getUrl().getParameter(Constants.SIDE_KEY).equals(Constants.PROVIDER)){
-			transationName = Constants.PROJECT_NAME + "Call";
-			transationType = transationName + ".server";
-			appName =  invoker.getUrl().getParameter(Constants.PROVIDE_APP);
-		}else{
-			appName = invocation.getAttachment(Constants.CONSUMER_APP);
+		Result result = null;
+		try{	
+			String transationName = Constants.PROJECT_NAME + "Service";
+			String transationType = transationName + ".client";
+			String ip = RpcContext.getContext().getRemoteHost();
+			String appName = null;
+			if(!invoker.getUrl().getParameter(Constants.SIDE_KEY).equals(Constants.PROVIDER)){
+				transationName = Constants.PROJECT_NAME + "Call";
+				transationType = transationName + ".server";
+				appName =  invoker.getUrl().getParameter(Constants.PROVIDE_APP);
+			}else{
+				appName = invocation.getAttachment(Constants.CONSUMER_APP);
+			}
+	
+			Transaction t = Cat.getProducer().newTransaction(transationName, getName(invoker, invocation));
+			Cat.logEvent(transationType, ip);
+			Cat.logEvent(transationName + ".app", appName);
+			
+			try {
+				result = invoker.invoke(invocation);
+				t.setStatus(Transaction.SUCCESS);
+				return result;
+			}
+			catch (Throwable e) {
+				Cat.getProducer().logError(e);
+				t.setStatus(e);
+				RpcException rpcException = new RpcException(e);
+				throw rpcException;
+			}
+			finally {
+				t.complete();
+			}
+		}catch (RpcException e) {
+			throw e;
+		}catch (Exception e){
+			result = invoker.invoke(invocation);
 		}
-
-		Transaction t = Cat.getProducer().newTransaction(transationName, getName(invoker, invocation));
-		Cat.logEvent(transationType, ip);
-		Cat.logEvent(transationName + ".app", appName);
-		
-		try {
-			Result result = invoker.invoke(invocation);
-			t.setStatus(Transaction.SUCCESS);
-			return result;
-		}
-		catch (Throwable e) {
-			Cat.getProducer().logError(e);
-			t.setStatus(e);
-			RpcException rpcException = new RpcException(e);
-			throw rpcException;
-		}
-		finally {
-			t.complete();
-		}
+		return result;
 	}
 
 	private String getName(Invoker<?> invoker, Invocation invocation) {
